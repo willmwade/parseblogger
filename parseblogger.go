@@ -56,7 +56,7 @@ func NewBloggerFeed(url string) *BloggerFeed {
 	return &bf
 }
 
-func (b *BloggerFeed) GetFeed() error {
+func (b *BloggerFeed) FetchUrl() string {
 	url := b.Url + "/feeds/posts/default?"
 	if b.Limit != 0 {
 		url += "max-results=" + strconv.FormatInt(b.Limit, 10)
@@ -71,8 +71,11 @@ func (b *BloggerFeed) GetFeed() error {
 	if !b.MinDate.IsZero() {
 		url += "&" + b.MinDate.Format("2006-01-02T15:04:05-07:00")
 	}
+	return url
+}
 
-	xmlrsp, err := http.Get(url)
+func (b *BloggerFeed) GetFeed(client *http.Client) error {
+	xmlrsp, err := client.Get(b.FetchUrl())
 	if err != nil {
 		return err
 	}

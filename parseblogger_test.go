@@ -2,6 +2,7 @@
 package parseblogger
 
 import (
+	"net/http"
 	"testing"
 	"time"
 )
@@ -20,7 +21,9 @@ func TestGetFeed(t *testing.T) {
 
 	newBloggerFeed.Limit = 2
 
-	err := newBloggerFeed.GetFeed()
+	var client http.Client
+
+	err := newBloggerFeed.GetFeed(&client)
 	if err != nil {
 		t.Errorf("%v", err)
 	} else if newBloggerFeed.Entries[0].Author.Avitar.Url() == "" {
@@ -32,7 +35,7 @@ func TestGetFeed(t *testing.T) {
 	newBloggerFeed.Limit = 2
 	newBloggerFeed.MaxDate = time.Now()
 
-	err = newBloggerFeed.GetFeed()
+	err = newBloggerFeed.GetFeed(&client)
 	if err != nil {
 		t.Errorf("%v", err)
 	} else if newBloggerFeed.Entries[0].Author.Avitar.Url() == "" {
