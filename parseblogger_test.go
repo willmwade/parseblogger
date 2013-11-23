@@ -7,38 +7,38 @@ import (
 	"time"
 )
 
-func TestNewBloggerFeed(t *testing.T) {
+func TestNewFeed(t *testing.T) {
 	url := "http://wilnregina.blogspot.com"
-	newBloggerFeed := NewBloggerFeed(url)
-	if newBloggerFeed.Url != url {
-		t.Errorf("NewBloggerFeed not getting initialized correctly.")
+	newFeed := NewFeed(url)
+	if newFeed.Url != url {
+		t.Errorf("NewFeed not getting initialized correctly.")
 	}
 }
 
 func TestGetFeed(t *testing.T) {
 	url := "http://wilnregina.blogspot.com"
-	newBloggerFeed := NewBloggerFeed(url)
+	newFeed := NewFeed(url)
 
-	newBloggerFeed.Limit = 2
+	newFeed.Limit = 2
 
 	var client http.Client
 
-	err := newBloggerFeed.GetFeed(&client)
+	err := newFeed.GetFeed(&client)
 	if err != nil {
 		t.Errorf("%v", err)
-	} else if newBloggerFeed.Entries[0].Author.Avitar.Url() == "" {
+	} else if newFeed.Entries[0].Author.Avitar.Url() == "" {
 		t.Errorf("Looks like the cache failed, at least on the Avitar URL")
 	}
 
-	newBloggerFeed = NewBloggerFeed(url)
+	newFeed = NewFeed(url)
 
-	newBloggerFeed.Limit = 2
-	newBloggerFeed.MaxDate = time.Now()
+	newFeed.Limit = 2
+	newFeed.MaxDate = time.Now()
 
-	err = newBloggerFeed.GetFeed(&client)
+	err = newFeed.GetFeed(&client)
 	if err != nil {
 		t.Errorf("%v", err)
-	} else if newBloggerFeed.Entries[0].Author.Avitar.Url() == "" {
+	} else if newFeed.Entries[0].Author.Avitar.Url() == "" {
 		t.Errorf("Looks like the cache failed for max date")
 	}
 }

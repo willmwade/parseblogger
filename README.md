@@ -10,11 +10,11 @@ If you have a Google Application API Key it might be much easier to use the offi
 Example
 ----------
 ```
-bloggerFeed := parseblogger.NewBloggerFeed("http://test.blogspot.com")
-bloggerFeed.Limit = 6
-bloggerFeed.GetFeed()
+feed := parseblogger.NewFeed("http://test.blogspot.com")
+feed.Limit = 6
+feed.GetFeed()
 
-for _, e := range bloggerFeed.Entries {
+for _, e := range feed.Entries {
   // Do something with those entries.
 }
 ```

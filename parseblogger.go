@@ -9,9 +9,10 @@ import (
 	"time"
 )
 
-type BloggerFeed struct {
+type Feed struct {
 	Url        string
 	Limit      int64
+	StartIndex int64
 	MinDate    time.Time
 	MaxDate    time.Time
 	XMLName    xml.Name   `xml:"feed"`
@@ -50,13 +51,13 @@ type Avitar struct {
 	Src string `xml:"src,attr"`
 }
 
-func NewBloggerFeed(url string) *BloggerFeed {
-	var bf BloggerFeed
+func NewFeed(url string) *Feed {
+	var bf Feed
 	bf.Url = url
 	return &bf
 }
 
-func (b *BloggerFeed) FetchUrl() string {
+func (b *Feed) FetchUrl() string {
 	url := b.Url + "/feeds/posts/default?"
 	if b.Limit != 0 {
 		url += "max-results=" + strconv.FormatInt(b.Limit, 10)
@@ -64,17 +65,21 @@ func (b *BloggerFeed) FetchUrl() string {
 		url += "max-results=100000"
 	}
 
+	if b.StartIndex != 0 {
+		url += "&start-index=" + strconv.FormatInt(b.StartIndex, 10)
+	}
+
 	if !b.MaxDate.IsZero() {
-		url += "&" + b.MaxDate.Format("2006-01-02T15:04:05-07:00")
+		url += "&updated-max=" + b.MaxDate.Format("2006-01-02T15:04:05-07:00")
 	}
 
 	if !b.MinDate.IsZero() {
-		url += "&" + b.MinDate.Format("2006-01-02T15:04:05-07:00")
+		url += "&updated-min" + b.MinDate.Format("2006-01-02T15:04:05-07:00")
 	}
 	return url
 }
 
-func (b *BloggerFeed) GetFeed(client *http.Client) error {
+func (b *Feed) GetFeed(client *http.Client) error {
 	xmlrsp, err := client.Get(b.FetchUrl())
 	if err != nil {
 		return err
